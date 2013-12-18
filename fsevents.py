@@ -21,7 +21,7 @@ from _fsevents import (
     FS_ITEMXATTRMOD,
     FS_ITEMISFILE,
     FS_ITEMISDIR,
-    FS_ITEMISSYMLINK,  
+    FS_ITEMISSYMLINK,
 )
 
 # inotify event flags
@@ -128,7 +128,7 @@ class Stream(object):
 
         # The C-extension needs the path in 8-bit form.
         self.paths = [
-            path if isinstance(path, bytes) 
+            path if isinstance(path, bytes)
             else path.encode('utf-8') for path in paths
         ]
 
@@ -161,9 +161,13 @@ class FileEventCallback(object):
         for path in sorted(paths):
             if sys.version_info[0] >= 3:
                 path = path.decode('utf-8')
-                
+
             path = path.rstrip('/')
-            snapshot = self.snapshots[path]
+
+            try:
+                snapshot = self.snapshots[path]
+            except KeyError:
+                continue
 
             current = {}
             try:
